@@ -297,23 +297,30 @@ struct common_params_model {
 
 struct common_ngram_mod;
 
+struct common_params_speculative_ngram_mod {
+    int32_t n_match = 24;
+
+    int32_t n_draft_max = 64;
+    int32_t n_draft_min = 48;
+
+    std::shared_ptr<common_ngram_mod> ptr;
+};
+
 struct common_params_speculative {
     common_speculative_type type = COMMON_SPECULATIVE_TYPE_NONE; // type of speculative decoding
 
-    // general-purpose speculative decoding parameters
+    // draft-model-based speculative decoding parameters
 
     int32_t n_max   = 16; // maximum number of tokens to draft during speculative decoding
     int32_t n_min   = 0;  // minimum number of draft tokens to use for speculative decoding
     float   p_split = 0.1f; // speculative decoding split probability
     float   p_min   = 0.75f; // minimum speculative decoding probability (greedy)
 
-    // ngram-based speculative decoding
+    common_params_speculative_ngram_mod ngram_mod;
 
     uint16_t ngram_size_n   = 12; // ngram size for lookup
     uint16_t ngram_size_m   = 48; // mgram size for speculative tokens
     uint16_t ngram_min_hits = 1; // minimum hits at ngram/mgram lookup for mgram to be proposed
-
-    std::shared_ptr<common_ngram_mod> ngram_mod;
 
     std::string lookup_cache_static;  // path of static ngram cache file for lookup decoding           // NOLINT
     std::string lookup_cache_dynamic; // path of dynamic ngram cache file for lookup decoding          // NOLINT

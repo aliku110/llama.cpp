@@ -522,6 +522,10 @@ struct common_speculative_state_draft : public common_speculative_state {
                 result.resize(params.n_max);
             }
         }
+
+        if (result.size() < (size_t) params.n_min) {
+            result.clear();
+        }
     }
 
     void accept(uint16_t n_accepted) override {
@@ -712,16 +716,16 @@ struct common_speculative_state_ngram_mod : public common_speculative_state {
             i_last = cur_len - n;
         }
 
-        result.resize(n + params.n_max);
+        result.resize(n + params.ngram_n_max);
         for (size_t i = 0; i < n - 1; ++i) {
             result[i] = prompt_tgt[cur_len - n + 1 + i];
         }
         result[n - 1] = id_last;
 
-        for (int i = 0; i < params.n_max; ++i) {
+        for (int i = 0; i < params.ngram_n_max; ++i) {
             const llama_token token = mod.get(result.data() + i);
             if (token == common_ngram_mod::EMPTY) {
-                if (i < params.n_min) {
+                if (i < params.ngram_n_min) {
                     result.clear();
                     return;
                 }
